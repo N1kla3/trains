@@ -53,9 +53,9 @@ private:
     void drawRailways(sf::RenderWindow *window);
     const std::string mapView = "C:/Users/Kolya/CLionProjects/trainLab/pictures/map.png";
     sf::Texture mapTexture;
-public:
     sf::Sprite mapSprite;
-    void initMap(sf::RenderWindow *window);
+public:
+    void drawMap(sf::RenderWindow *window);
     Map();
     ~Map();
 };

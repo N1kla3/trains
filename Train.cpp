@@ -14,7 +14,8 @@ Carriage::Carriage(const char typ) : type(typ) {
     }
 }
 
-Train::Train(int trade, int passenger, int stationId) : number(stationId) {
+Train::Train(int trade, int passenger, int stationId)
+        : number(stationId) {
     for(int i = 0; i < trade; i++){
         Carriage carr(TRADE);
         carriages.push_back(carr);
@@ -29,8 +30,10 @@ Train::Train(int trade, int passenger, int stationId) : number(stationId) {
         maxPassengerCapacity += carr.passengerCapacity;
         maxTradeCapacity += carr.tradeCapacity;
     }
+    currPassenCapacity = 0;
+    currTradeCapacity = 0;
 }
 
 float Train::getMovespeed() {
-    return 100 - ((float)curentCapacity / 30);
+    return 0;
 }

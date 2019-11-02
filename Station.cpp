@@ -45,49 +45,49 @@ void PassStation::initSprite(float x, float y) {
 }
 
 void TradeStation::downloading() {
-    int freeSpace = arrivedTrain->getMaxTradeCapacity() -
-                    arrivedTrain->getTradeCapacity();
+    int trainFreeSpace = arrivedTrain->getMaxTradeCapacity() -
+                         arrivedTrain->getTradeCapacity();
 
-    if(product > freeSpace){
-        product -= freeSpace;
-        arrivedTrain->addTradeProd(freeSpace);
+    if(product > trainFreeSpace){
+        product -= trainFreeSpace;
+        arrivedTrain->setTradeProd(arrivedTrain->getMaxTradeCapacity());
     }else{
-        arrivedTrain->addTradeProd(product);
+        arrivedTrain->setTradeProd(arrivedTrain->getTradeCapacity() + product);
         product = 0;
     }
 }
 
 void TradeStation::unloading() {
-    int freeSpace = maxProduct - product;
-    if(arrivedTrain->getTradeCapacity() < freeSpace) {
+    int stationFreeSpace = maxProduct - product;
+    if(arrivedTrain->getTradeCapacity() < stationFreeSpace) {
         product += arrivedTrain->getTradeCapacity();
-        arrivedTrain->redTradeProd(arrivedTrain->getTradeCapacity());
+        arrivedTrain->setTradeProd(0);
     }else{
         product = maxProduct;
-        arrivedTrain->redTradeProd(freeSpace);
+        arrivedTrain->setTradeProd(arrivedTrain->getTradeCapacity() - stationFreeSpace);
     }
 }
 
 void PassStation::downloading() {
-    int freeSpace = arrivedTrain->getMaxPassenCapacity() -
-                    arrivedTrain->getPassengerCapacity();
+    int trainFreeSpace = arrivedTrain->getMaxPassenCapacity() -
+                         arrivedTrain->getPassengerCapacity();
 
-    if(product > freeSpace){
-        product -= freeSpace;
-        arrivedTrain->addPassengers(freeSpace);
+    if(product > trainFreeSpace){
+        product -= trainFreeSpace;
+        arrivedTrain->setPassengers(arrivedTrain->getMaxPassenCapacity());
     }else{
-        arrivedTrain->addPassengers(product);
+        arrivedTrain->setPassengers(arrivedTrain->getPassengerCapacity() + product);
         product = 0;
     }
 }
 
 void PassStation::unloading() {
-    int freeSpace = maxProduct - product;
-    if(arrivedTrain->getPassengerCapacity() < freeSpace) {
+    int stationFreeSpace = maxProduct - product;
+    if(arrivedTrain->getPassengerCapacity() < stationFreeSpace) {
         product += arrivedTrain->getPassengerCapacity();
-        arrivedTrain->redPassengers(arrivedTrain->getPassengerCapacity());
+        arrivedTrain->setPassengers(0);
     }else{
         product = maxProduct;
-        arrivedTrain->redPassengers(freeSpace);
+        arrivedTrain->setPassengers(arrivedTrain->getTradeCapacity() - stationFreeSpace);
     }
 }

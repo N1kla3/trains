@@ -14,8 +14,8 @@ protected:
     Train *arrivedTrain;
     bool hasTrain;
     int number;
-    const float cordX;
-    const float cordY;
+    float cordX;
+    float cordY;
     int product;
     sf::Image image;
     sf::Texture stationTexture;
@@ -26,18 +26,21 @@ protected:
 public:
     sf::Sprite stationSprite;
 
-    const float getX(){return cordX;}
-    const float getY(){return cordY;}
+    float getX(){return cordX;}
+    float getY(){return cordY;}
     void loseTrain();
     bool haveTrain(){return hasTrain;}
     void getTrain(Train *train);
     int getNumber(){return number;}
-    Station(int id, int capacity, float x, float y):maxProduct(capacity), cordY(y), cordX(x){
+    Station(int id, int capacity, float x, float y)
+            :maxProduct(capacity), cordY(y), cordX(x){
         number = id;
         product = maxProduct - 100;
         hasTrain = false;
+        arrivedTrain = nullptr;
         initSprite(x, y);
     }
+    Station(int capacity) : maxProduct(capacity) {}
 };
 
 class TradeStation : public Station{
@@ -47,7 +50,11 @@ public:
     void downloading()override;
     void unloading()override;
     void initSprite(float x, float y)override;
-    TradeStation(int id, int capacity, float x, float y):Station(id, capacity, x, y){
+    TradeStation(int id, int capacity, float x, float y)
+            :Station(capacity){
+        number = id;
+        cordX = x;
+        cordY = y;
         initSprite(x, y);
     }
 };
@@ -59,7 +66,11 @@ public:
     void downloading()override;
     void unloading()override;
     void initSprite(float x, float y)override;
-    PassStation(int id, int capacity, float x, float y):Station(id, capacity, x, y){
+    PassStation(int id, int capacity, float x, float y)
+            :Station(capacity){
+        number = id;
+        cordX = x;
+        cordY = y;
         initSprite(x, y);
     }
 };

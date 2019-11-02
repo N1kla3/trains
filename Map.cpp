@@ -47,6 +47,7 @@ void Map::readStations(){
             }Map::amountOfStations++;
         }
     }
+    size = Map::amountOfStations;
 }
 
 void Map::readTrain() {
@@ -65,7 +66,8 @@ void Map::initializeTrains() {
         for(Train train : trains){
             if(station.getNumber() == train.getNumber()) {
                 station.getTrain(&train);
-            }else break;
+                break;
+            }
         }
     }
 }
@@ -82,27 +84,28 @@ void Map::makeRailways() {
 }
 
 double Map::calculateRotation(float x, float y, float lentgh) {
-    double res;
-    float result = fabsf(x) / lentgh;
-    if(fabsf(x) >= fabsf(y)){
-        res = (acos((double)result)*(180/3.14159265359));
-    }else if(fabsf(x) < fabsf(y)){
-        res = (asin((double)result)*(180/3.14159265359));
+    double res = 0;
+    float result = 0;
+    if((x > 0 && y > 0) || (x < 0 && y > 0)){
+        result = fabsf(y) / lentgh;
+    }else if((x > 0 && y < 0) || (x < 0 && y < 0)){
+        result = fabsf(x) / lentgh;
     }
+    res = (asin((double)result)*(180/3.14159265359));
     if(x > 0 && y < 0){
-        res += 90;
-    } else if (x > 0 && y > 0){
+        res = 180 - res;
+    }else if (x > 0 && y > 0){
         res += 180;
     }else if(x < 0 && y > 0){
-        res -= 90;
-    };
-    std::cout << res << std::ends;
+        res = 360 - res;
+    }else if (x < 0 && y < 0){
+        res = 90 - res;
+    }
     return res;
 }
 
 float Map::calculateLength(float x, float y) {
     float res = (std::sqrt(x*x + y*y));
-    std::cout << res <<std::ends;
     return res;
 }
 
@@ -118,7 +121,7 @@ void Map::drawRailways(sf::RenderWindow *window) {
     }
 }
 
-void Map::initMap(sf::RenderWindow *window) {
+void Map::drawMap(sf::RenderWindow *window) {
     mapTexture.loadFromFile(mapView);
     mapSprite.setTexture(mapTexture);
     window->draw(mapSprite);
@@ -128,7 +131,6 @@ void Map::initMap(sf::RenderWindow *window) {
 
 Map::Map() {
     readStations();
-    size = Map::amountOfStations;
     createField();
     readField();
     readTrain();

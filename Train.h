@@ -34,9 +34,9 @@ private:
     int currPassenCapacity;
     int currTradeCapacity;
     int curentCapacity;
-    const std::string mapView = "";
-    sf::Texture mapTexture;
-    sf::Sprite mapSprite;
+    const std::string trainView = "";
+    sf::Texture trainTextur;
+    sf::Sprite trainSprite;
 public:
     int getPassengerCapacity(){
         return currPassenCapacity;
@@ -50,17 +50,11 @@ public:
     int getMaxTradeCapacity(){
         return maxTradeCapacity;
     }
-    void addTradeProd(int additive){
-        currTradeCapacity  += additive;
+    void setTradeProd(int setter){
+        currTradeCapacity  = setter;
     }
-    void redTradeProd(int additive){
-        currTradeCapacity  -= additive;
-    }
-    void addPassengers(int additive){
-        currPassenCapacity  += additive;
-    }
-    void redPassengers(int additive){
-        currPassenCapacity  -= additive;
+    void setPassengers(int setter){
+        currPassenCapacity  = setter;
     }
     int getNumber(){
         return number;
