@@ -83,32 +83,6 @@ void Map::makeRailways() {
     }
 }
 
-double Map::calculateRotation(float x, float y, float lentgh) {
-    double res = 0;
-    float result = 0;
-    if((x > 0 && y > 0) || (x < 0 && y > 0)){
-        result = fabsf(y) / lentgh;
-    }else if((x > 0 && y < 0) || (x < 0 && y < 0)){
-        result = fabsf(x) / lentgh;
-    }
-    res = (asin((double)result)*(180/3.14159265359));
-    if(x > 0 && y < 0){
-        res = 180 - res;
-    }else if (x > 0 && y > 0){
-        res += 180;
-    }else if(x < 0 && y > 0){
-        res = 360 - res;
-    }else if (x < 0 && y < 0){
-        res = 90 - res;
-    }
-    return res;
-}
-
-float Map::calculateLength(float x, float y) {
-    float res = (std::sqrt(x*x + y*y));
-    return res;
-}
-
 void Map::drawStations(sf::RenderWindow *window) {
     for(Station &station : stations){
         window->draw(station.stationSprite);

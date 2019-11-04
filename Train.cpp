@@ -35,5 +35,52 @@ Train::Train(int trade, int passenger, int stationId)
 }
 
 float Train::getMovespeed() {
-    return 0;
+    return 100;
+}
+
+void Train::initSprite(float x, float y, float xDiff, float yDiff) {
+    movespeed = getMovespeed();
+    image.loadFromFile(trainView);
+    image.createMaskFromColor( sf::Color::White, 0 );
+
+    float length  = Train::calculateLength(xDiff, yDiff);
+
+    trainTextur.loadFromImage(image, sf::IntRect(0, 0, length, 100 ));
+
+    trainSprite.setTexture(trainTextur);
+    trainSprite.setPosition(x + 75, y + 75);
+    trainSprite.rotate((float) Train::calculateRotation(xDiff, yDiff, length));
+}
+
+void Train::moveTrain(sf::RenderWindow *window, float time, float x, float y) {
+    float xMove = (movespeed/x)*time;
+    float yMove = (movespeed/y)*time;
+    trainSprite.move(xMove, yMove);
+    window->draw(trainSprite);
+}
+
+double Train::calculateRotation(float x, float y, float lentgh) {
+    double res = 0;
+    float result = 0;
+    if((x > 0 && y > 0) || (x < 0 && y > 0)){
+        result = fabsf(y) / lentgh;
+    }else if((x > 0 && y < 0) || (x < 0 && y < 0)){
+        result = fabsf(x) / lentgh;
+    }
+    res = (asin((double)result)*(180/3.14159265359));
+    if(x > 0 && y < 0){
+        res = 180 - res;
+    }else if (x > 0 && y > 0){
+        res += 180;
+    }else if(x < 0 && y > 0){
+        res = 360 - res;
+    }else if (x < 0 && y < 0){
+        res = 90 - res;
+    }
+    return res;
+}
+
+float Train::calculateLength(float x, float y) {
+    float res = (std::sqrt(x*x + y*y));
+    return res;
 }

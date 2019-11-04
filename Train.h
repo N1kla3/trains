@@ -34,10 +34,17 @@ private:
     int currPassenCapacity;
     int currTradeCapacity;
     int curentCapacity;
-    const std::string trainView = "";
+    float movespeed;
+    const std::string trainView = "C:/Users/Kolya/CLionProjects/trainLab/pictures/train.png";
+    sf::Image image;
     sf::Texture trainTextur;
     sf::Sprite trainSprite;
 public:
+    static float calculateLength(float x, float y);
+    static double calculateRotation(float x, float y, float lentgh);
+    void initSprite(float x, float y, float xDiff, float yDiff);
+    void moveTrain(sf::RenderWindow *window, float time, float x, float y);
+
     int getPassengerCapacity(){
         return currPassenCapacity;
     }

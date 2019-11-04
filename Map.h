@@ -25,13 +25,13 @@ private:
             image.loadFromFile(imagePath);
             image.createMaskFromColor( sf::Color::White, 0 );
 
-            float length  = Map::calculateLength(xDiff, yDiff);
+            float length  = Train::calculateLength(xDiff, yDiff);
 
             railway.loadFromImage(image, sf::IntRect(0, 0, length, 100 ));
 
             sprite.setTexture(railway);
             sprite.setPosition(map->stations[i].getX() + 75, map->stations[i].getY() + 75);
-            sprite.rotate((float) Map::calculateRotation(xDiff, yDiff, length));
+            sprite.rotate((float) Train::calculateRotation(xDiff, yDiff, length));
         }
     };
 
@@ -48,8 +48,6 @@ private:
     void readTrain();
     void initializeTrains();
     void makeRailways();
-    static double calculateRotation(float x, float y, float lentgh);
-    static float calculateLength(float x, float y);
     void drawRailways(sf::RenderWindow *window);
     const std::string mapView = "C:/Users/Kolya/CLionProjects/trainLab/pictures/map.png";
     sf::Texture mapTexture;
