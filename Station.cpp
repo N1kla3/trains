@@ -20,29 +20,14 @@ void Station::loseTrain() {
     arrivedTrain = nullptr;
 }
 
-void Station::initSprite(float x, float y) {
-    image.loadFromFile( picture );
+void Station::initSprite(float x, float y, const std::string picturePath) {
+    image.loadFromFile(picturePath );
     image.createMaskFromColor( sf::Color::White, 0 );
     stationTexture.loadFromImage( image, sf::IntRect( 0, 0, 150, 150 ) );
     stationSprite.setTexture(stationTexture);
     stationSprite.setPosition(x, y);
 }
 
-void TradeStation::initSprite(float x, float y) {
-    image.loadFromFile( picture );
-    image.createMaskFromColor( sf::Color::White, 0 );
-    stationTexture.loadFromImage( image, sf::IntRect( 0, 0, 150, 150 ) );
-    stationSprite.setTexture(stationTexture);
-    stationSprite.setPosition(x, y);
-}
-
-void PassStation::initSprite(float x, float y) {
-    image.loadFromFile( picture );
-    image.createMaskFromColor( sf::Color::White, 0 );
-    stationTexture.loadFromImage( image, sf::IntRect( 0, 0, 150, 150 ) );
-    stationSprite.setTexture(stationTexture);
-    stationSprite.setPosition(x, y);
-}
 
 void TradeStation::downloading() {
     int trainFreeSpace = arrivedTrain->getMaxTradeCapacity() -

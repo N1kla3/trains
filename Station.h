@@ -22,7 +22,8 @@ protected:
     const int maxProduct;
     virtual void unloading(){std::cout << "df";};
     virtual void downloading(){std::cout << "sdfs";};
-    virtual void initSprite(float x, float y);
+    virtual void initSprite(float x, float y, std::string picturePath);
+    Station(int capacity) : maxProduct(capacity) {}
 public:
     sf::Sprite stationSprite;
 
@@ -38,9 +39,8 @@ public:
         product = maxProduct - 100;
         hasTrain = false;
         arrivedTrain = nullptr;
-        initSprite(x, y);
+        initSprite(x, y, picture);
     }
-    Station(int capacity) : maxProduct(capacity) {}
 };
 
 class TradeStation : public Station{
@@ -49,13 +49,12 @@ private:
 public:
     void downloading()override;
     void unloading()override;
-    void initSprite(float x, float y)override;
     TradeStation(int id, int capacity, float x, float y)
             :Station(capacity){
         number = id;
         cordX = x;
         cordY = y;
-        initSprite(x, y);
+        initSprite(x, y, picture);
     }
 };
 
@@ -65,13 +64,12 @@ private:
 public:
     void downloading()override;
     void unloading()override;
-    void initSprite(float x, float y)override;
     PassStation(int id, int capacity, float x, float y)
             :Station(capacity){
         number = id;
         cordX = x;
         cordY = y;
-        initSprite(x, y);
+        initSprite(x, y, picture);
     }
 };
 
