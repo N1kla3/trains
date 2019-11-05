@@ -29,7 +29,7 @@ public:
 
     float getX(){return cordX;}
     float getY(){return cordY;}
-    void loseTrain();
+    void loseTrain(Train *arrivedTrain);
     bool haveTrain(){return hasTrain;}
     void getTrain(Train *train);
     int getNumber(){return number;}

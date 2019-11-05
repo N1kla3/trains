@@ -15,9 +15,10 @@
         unloading();
     }
 }
-void Station::loseTrain() {
+void Station::loseTrain(Train *arrivedTrain) {
     hasTrain = false;
-    arrivedTrain = nullptr;
+    delete arrivedTrain->trainSprite;
+    arrivedTrain->trainSprite = nullptr;
 }
 
 void Station::initSprite(float x, float y, const std::string picturePath) {

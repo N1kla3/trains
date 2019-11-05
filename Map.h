@@ -38,22 +38,29 @@ private:
     std::vector<Train> trains;
     std::vector<Station> stations;
     std::vector<railWay> railSprites;
+
     int amountOfStations = 0;
     int size;
     int** field;
     void createField();
+    int getNextStation(int number);
+
     void readField();
     void readStations();
-    void drawStations(sf::RenderWindow *window);
     void readTrain();
+
     void initializeTrains();
     void makeRailways();
+
+    void drawStations(sf::RenderWindow *window);
     void drawRailways(sf::RenderWindow *window);
+    void drawTrains(sf::RenderWindow *window, float time);
+
     const std::string mapView = "C:/Users/Kolya/CLionProjects/trainLab/pictures/map.png";
     sf::Texture mapTexture;
     sf::Sprite mapSprite;
 public:
-    void drawMap(sf::RenderWindow *window);
+    void drawMap(sf::RenderWindow *window, float time);
     Map();
     ~Map();
 };

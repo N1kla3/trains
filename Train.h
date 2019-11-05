@@ -27,45 +27,36 @@ public:
 
 class Train {
 private:
-    const int number;
+    int number;
     std::vector<Carriage> carriages;
     int maxPassengerCapacity;
     int maxTradeCapacity;
     int currPassenCapacity;
     int currTradeCapacity;
-    int curentCapacity;
     float movespeed;
     const std::string trainView = "C:/Users/Kolya/CLionProjects/trainLab/pictures/train.png";
     sf::Image image;
     sf::Texture trainTextur;
-    sf::Sprite trainSprite;
+    float x;
+    float y;
 public:
+    sf::Sprite *trainSprite;
+    int nextStation;
+    float getY(){return y;}
+    float getX(){return x;}
     static float calculateLength(float x, float y);
     static double calculateRotation(float x, float y, float lentgh);
     void initSprite(float x, float y, float xDiff, float yDiff);
-    void moveTrain(sf::RenderWindow *window, float time, float x, float y);
+    void moveTrain(sf::RenderWindow *window, float time);
 
-    int getPassengerCapacity(){
-        return currPassenCapacity;
-    }
-    int getMaxPassenCapacity(){
-        return maxPassengerCapacity;
-    }
-    int getTradeCapacity(){
-        return currTradeCapacity;
-    }
-    int getMaxTradeCapacity(){
-        return maxTradeCapacity;
-    }
-    void setTradeProd(int setter){
-        currTradeCapacity  = setter;
-    }
-    void setPassengers(int setter){
-        currPassenCapacity  = setter;
-    }
-    int getNumber(){
-        return number;
-    }
+    int getPassengerCapacity(){return currPassenCapacity;}
+    int getMaxPassenCapacity(){return maxPassengerCapacity;}
+    int getTradeCapacity(){return currTradeCapacity;}
+    int getMaxTradeCapacity(){return maxTradeCapacity;}
+    void setTradeProd(int setter){currTradeCapacity  = setter;}
+    void setPassengers(int setter){currPassenCapacity  = setter;}
+    int getNumber(){return number;}
+    void setNumber(int setter){number = setter;}
     float getMovespeed();
     Train(int trade, int passenger, int stationId);
 };

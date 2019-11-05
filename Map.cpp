@@ -4,7 +4,6 @@
 
 #include "Map.h"
 
-#include <cmath>
 
 void Map::createField(){
     field = new int*[size];
@@ -55,7 +54,7 @@ void Map::readTrain() {
     int num, trade, passenger;
     if(file.is_open()){
         while(file >> num >> trade >> passenger){
-            auto *train = new Train(trade, passenger, num);
+            auto *train = new Train(trade, passenger, num-1);
             trains.push_back(*train);
         }
     }
@@ -63,9 +62,16 @@ void Map::readTrain() {
 
 void Map::initializeTrains() {
     for(Station station : stations){
-        for(Train train : trains){
+        for(Train &train : trains){
             if(station.getNumber() == train.getNumber()) {
                 station.getTrain(&train);
+                int number = station.getNumber();
+                train.nextStation = getNextStation(number);
+                float x = stations[number].getX();
+                float y = stations[number].getY();
+                float xDiff = stations[number].getX() - stations[train.nextStation].getX();
+                float yDiff = stations[number].getY() - stations[train.nextStation].getY();
+                train.initSprite(x,y,xDiff,yDiff);
                 break;
             }
         }
@@ -95,11 +101,45 @@ void Map::drawRailways(sf::RenderWindow *window) {
     }
 }
 
-void Map::drawMap(sf::RenderWindow *window) {
+int Map::getNextStation(int number) {
+    if(number < size){
+    for(int i = number; number < size; i++){
+        if(field[number][i]){
+            if(!stations[i].haveTrain())
+                return i;
+        }
+    }
+}
+    return -1;
+}
+
+void Map::drawTrains(sf::RenderWindow *window, float time) {
+    for(Train &train : trains){
+        int number = train.getNumber();
+        if(round(train.trainSprite->getPosition().x) == stations[train.nextStation].getX()+60){
+            stations[number].loseTrain(&train);
+            stations[train.nextStation].getTrain(&train);
+            train.setNumber(train.nextStation);
+            train.nextStation = getNextStation(number);
+
+            number = train.getNumber();
+            float x = stations[number].getX();
+            float y = stations[number].getY();
+            float xDiff = stations[number].getX() - stations[train.nextStation].getX();
+            float yDiff = stations[number].getY() - stations[train.nextStation].getY();
+            train.initSprite(x,y,xDiff,yDiff);
+        }else if(train.trainSprite != nullptr){
+            train.moveTrain(window, time);
+        }
+    }
+}
+
+void Map::drawMap(sf::RenderWindow *window, float time) {
     mapTexture.loadFromFile(mapView);
     mapSprite.setTexture(mapTexture);
     window->draw(mapSprite);
     drawRailways(window);
+    drawTrains(window, time);
     drawStations(window);
 }
 
