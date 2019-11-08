@@ -1,12 +1,10 @@
-//
 // Created by Kolya on 10/17/2019.
 //
 
 #include "Station.h"
 
 
- void Station::getTrain(Train *train){
-    hasTrain = true;
+void Station::handleTrain(Train *train){
     arrivedTrain = train;
     if(train->getMaxPassenCapacity() > train->getPassengerCapacity() ||
                 train->getMaxTradeCapacity() > train->getTradeCapacity()){
@@ -15,10 +13,13 @@
         unloading();
     }
 }
-void Station::loseTrain(Train *arrivedTrain) {
+
+void Station::getTrain() {
+    hasTrain = true;
+}
+
+void Station::loseTrain() {
     hasTrain = false;
-    delete arrivedTrain->trainSprite;
-    arrivedTrain->trainSprite = nullptr;
 }
 
 void Station::initSprite(float x, float y, const std::string picturePath) {

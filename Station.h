@@ -23,15 +23,20 @@ protected:
     virtual void unloading(){std::cout << "df";};
     virtual void downloading(){std::cout << "sdfs";};
     virtual void initSprite(float x, float y, std::string picturePath);
-    Station(int capacity) : maxProduct(capacity) {}
+    Station(int capacity) : maxProduct(capacity) {
+        product = maxProduct - 100;
+        hasTrain = false;
+        arrivedTrain = nullptr;
+    }
 public:
     sf::Sprite stationSprite;
 
     float getX(){return cordX;}
     float getY(){return cordY;}
-    void loseTrain(Train *arrivedTrain);
+    void loseTrain();
+    void getTrain();
+    void handleTrain(Train *train);
     bool haveTrain(){return hasTrain;}
-    void getTrain(Train *train);
     int getNumber(){return number;}
     Station(int id, int capacity, float x, float y)
             :maxProduct(capacity), cordY(y), cordX(x){

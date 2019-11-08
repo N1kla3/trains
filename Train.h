@@ -37,16 +37,21 @@ private:
     const std::string trainView = "C:/Users/Kolya/CLionProjects/trainLab/pictures/train.png";
     sf::Image image;
     sf::Texture trainTextur;
-    float x;
-    float y;
+    float xWayToStation;
+    float yWayToStation;
+    float xPixelMove;
+    float yPixelMove;
+    void initPixelMove();
 public:
     sf::Sprite *trainSprite;
     int nextStation;
-    float getY(){return y;}
-    float getX(){return x;}
+    float getY(){return yWayToStation;}
+    float getX(){return xWayToStation;}
     static float calculateLength(float x, float y);
     static double calculateRotation(float x, float y, float lentgh);
+
     void initSprite(float x, float y, float xDiff, float yDiff);
+    void deleteSprite();
     void moveTrain(sf::RenderWindow *window, float time);
 
     int getPassengerCapacity(){return currPassenCapacity;}

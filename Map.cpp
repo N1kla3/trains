@@ -31,17 +31,17 @@ void Map::readField() {
 
 void Map::readStations(){
     std::ifstream file("C:/Users/Kolya/CLionProjects/trainLab/stations.txt");
-    int id, type, x ,y;
+    int id, capacity, x ,y;
     if(file.is_open()) {
-        while (file >> id >> type >> x >> y) {
-            if (type == 1) {
-                auto *station = new TradeStation(id, type, (float) x, (float) y);
+        while (file >> id >> capacity >> x >> y) {
+            if (capacity == 1) {
+                auto *station = new TradeStation(id-1, capacity, (float) x, (float) y);
                 stations.push_back(*station);
-            } else if (type == 2) {
-                auto *station = new PassStation(id, type, (float) x, (float) y);
+            } else if (capacity == 2) {
+                auto *station = new PassStation(id-1, capacity, (float) x, (float) y);
                 stations.push_back(*station);
             } else {
-                auto *station = new Station(id, type, (float) x, (float) y);
+                auto *station = new Station(id-1, capacity, (float) x, (float) y);
                 stations.push_back(*station);
             }Map::amountOfStations++;
         }
@@ -56,22 +56,26 @@ void Map::readTrain() {
         while(file >> num >> trade >> passenger){
             auto *train = new Train(trade, passenger, num-1);
             trains.push_back(*train);
+            stations[num - 1].getTrain();
         }
     }
 }
 
 void Map::initializeTrains() {
-    for(Station station : stations){
+    for(Station &station : stations){
         for(Train &train : trains){
             if(station.getNumber() == train.getNumber()) {
-                station.getTrain(&train);
-                int number = station.getNumber();
-                train.nextStation = getNextStation(number);
-                float x = stations[number].getX();
-                float y = stations[number].getY();
-                float xDiff = stations[number].getX() - stations[train.nextStation].getX();
-                float yDiff = stations[number].getY() - stations[train.nextStation].getY();
-                train.initSprite(x,y,xDiff,yDiff);
+                if(getNextStation(station.getNumber()) >= 0) {
+                    station.loseTrain();
+                    int number = station.getNumber();
+                    train.nextStation = getNextStation(number);
+                    stations[train.nextStation].getTrain();
+                    float x = stations[number].getX();
+                    float y = stations[number].getY();
+                    float xDiff = stations[number].getX() - stations[train.nextStation].getX();
+                    float yDiff = stations[number].getY() - stations[train.nextStation].getY();
+                    train.initSprite(x, y, xDiff, yDiff);
+                }else train.trainSprite = nullptr;
                 break;
             }
         }
@@ -103,7 +107,8 @@ void Map::drawRailways(sf::RenderWindow *window) {
 
 int Map::getNextStation(int number) {
     if(number < size){
-    for(int i = number; number < size; i++){
+    for(int i = 0; i < size; i++){
+        if(i == number) continue;
         if(field[number][i]){
             if(!stations[i].haveTrain())
                 return i;
@@ -116,27 +121,39 @@ int Map::getNextStation(int number) {
 void Map::drawTrains(sf::RenderWindow *window, float time) {
     for(Train &train : trains){
         int number = train.getNumber();
-        if(round(train.trainSprite->getPosition().x) == stations[train.nextStation].getX()+60){
-            stations[number].loseTrain(&train);
-            stations[train.nextStation].getTrain(&train);
-            train.setNumber(train.nextStation);
-            train.nextStation = getNextStation(number);
+        if(train.trainSprite == nullptr){
+            if(getNextStation(number) >= 0) {
+                if(train.nextStation != 100){
+                    train.setNumber(train.nextStation);
+                    number = train.getNumber();
+                }
+                stations[number].loseTrain();
+                train.nextStation = getNextStation(number);
+                stations[train.nextStation].getTrain();
+                float x = stations[number].getX();
+                float y = stations[number].getY();
+                float xDiff = stations[number].getX() - stations[train.nextStation].getX();
+                float yDiff = stations[number].getY() - stations[train.nextStation].getY();
+                train.initSprite(x, y, xDiff, yDiff);
+            }
+        }else {
+            bool isTrainGettoStation = (round(train.trainSprite->getPosition().x) > stations[train.nextStation].getX()
+                    && round(train.trainSprite->getPosition().x) <stations[train.nextStation].getX() + 100)
+                                       &&
+                    ((round(train.trainSprite->getPosition().y) > stations[train.nextStation].getY())
+                    && round(train.trainSprite->getPosition().y) <stations[train.nextStation].getY() + 100);
 
-            number = train.getNumber();
-            float x = stations[number].getX();
-            float y = stations[number].getY();
-            float xDiff = stations[number].getX() - stations[train.nextStation].getX();
-            float yDiff = stations[number].getY() - stations[train.nextStation].getY();
-            train.initSprite(x,y,xDiff,yDiff);
-        }else if(train.trainSprite != nullptr){
-            train.moveTrain(window, time);
+            if (isTrainGettoStation) {
+                train.deleteSprite();
+                stations[train.nextStation].handleTrain(&train);
+            } else if (train.trainSprite != nullptr) {
+                train.moveTrain(window, time);
+            }
         }
     }
 }
 
 void Map::drawMap(sf::RenderWindow *window, float time) {
-    mapTexture.loadFromFile(mapView);
-    mapSprite.setTexture(mapTexture);
     window->draw(mapSprite);
     drawRailways(window);
     drawTrains(window, time);
@@ -144,6 +161,8 @@ void Map::drawMap(sf::RenderWindow *window, float time) {
 }
 
 Map::Map() {
+    mapTexture.loadFromFile(mapView);
+    mapSprite.setTexture(mapTexture);
     readStations();
     createField();
     readField();

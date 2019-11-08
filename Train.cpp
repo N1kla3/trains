@@ -31,10 +31,32 @@ Train::Train(int trade, int passenger, int stationId)
     }
     currPassenCapacity = 0;
     currTradeCapacity = 0;
+    nextStation = 100;
+}
+
+void Train::deleteSprite() {
+    delete trainSprite;
+    trainSprite = nullptr;
 }
 
 float Train::getMovespeed() {
-    return 1000;
+    return 100;
+}
+
+void Train::initPixelMove() {
+    float r = 1;
+    float z = 1;
+    if(fabsf(yWayToStation) > fabsf(xWayToStation)){
+        z = fabsf(xWayToStation / yWayToStation);
+    }else r = fabsf(yWayToStation / xWayToStation);
+
+    if((yWayToStation < 0 && xWayToStation < 0) || (yWayToStation > 0 && xWayToStation > 0)){
+        xPixelMove = ((0 - movespeed) / (yWayToStation / fabsf(yWayToStation))) * z;
+        yPixelMove = ((0 - movespeed) / (xWayToStation / fabsf(xWayToStation))) * r;
+    }else {
+        xPixelMove = (movespeed / (yWayToStation / fabsf(yWayToStation))) * z;
+        yPixelMove = (movespeed / (xWayToStation / fabsf(xWayToStation))) * r;
+    }
 }
 
 void Train::initSprite(float x, float y, float xDiff, float yDiff) {
@@ -48,23 +70,17 @@ void Train::initSprite(float x, float y, float xDiff, float yDiff) {
     trainTextur.setSmooth(true);
     trainSprite = new sf::Sprite;
     trainSprite->setTexture(trainTextur);
-    trainSprite->setPosition(x + 75, y + 65);
+    trainSprite->setPosition(x + 75, y + 75);
+    trainSprite->setOrigin(0, 50);
     trainSprite->rotate((float) Train::calculateRotation(xDiff, yDiff, length));
-    this->y = yDiff;
-    this->x = xDiff;
+    this->yWayToStation = yDiff;
+    this->xWayToStation = xDiff;
+    initPixelMove();
 }
 
 void Train::moveTrain(sf::RenderWindow *window, float time) {
-    float xMove;
-    float yMove;
-    if((y < 0 && x < 0) || (y > 0 && x > 0)){
-        xMove = ((0-movespeed)/y)*time;
-        yMove = ((0-movespeed)/x)*time;
-    }else {
-        xMove = (movespeed/y)*time;
-        yMove = (movespeed/x)*time;
-    }
-    trainSprite->move(xMove, yMove);
+
+    trainSprite->move(xPixelMove * time, yPixelMove * time);
     sf::Vector2f lol = trainSprite->getPosition();
     std::cout << lol.x << std::ends;
     std::cout << lol.y << std::endl;
@@ -81,7 +97,7 @@ double Train::calculateRotation(float x, float y, float lentgh) {
     }
     res = (asin((double)result)*(180/3.14159265359));
     if(x > 0 && y < 0){
-        res = 180 - res;
+        res = 90 + res;
     }else if (x > 0 && y > 0){
         res += 180;
     }else if(x < 0 && y > 0){

@@ -28,9 +28,11 @@ private:
             float length  = Train::calculateLength(xDiff, yDiff);
 
             railway.loadFromImage(image, sf::IntRect(0, 0, length, 100 ));
+            railway.setSmooth(true);
 
             sprite.setTexture(railway);
             sprite.setPosition(map->stations[i].getX() + 75, map->stations[i].getY() + 75);
+            sprite.setOrigin(0, 50);
             sprite.rotate((float) Train::calculateRotation(xDiff, yDiff, length));
         }
     };
