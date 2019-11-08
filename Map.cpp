@@ -123,10 +123,6 @@ void Map::drawTrains(sf::RenderWindow *window, float time) {
         int number = train.getNumber();
         if(train.trainSprite == nullptr){
             if(getNextStation(number) >= 0) {
-                if(train.nextStation != 100){
-                    train.setNumber(train.nextStation);
-                    number = train.getNumber();
-                }
                 stations[number].loseTrain();
                 train.nextStation = getNextStation(number);
                 stations[train.nextStation].getTrain();
@@ -146,6 +142,7 @@ void Map::drawTrains(sf::RenderWindow *window, float time) {
             if (isTrainGettoStation) {
                 train.deleteSprite();
                 stations[train.nextStation].handleTrain(&train);
+                train.setNumber(stations[train.nextStation].getNumber());
             } else if (train.trainSprite != nullptr) {
                 train.moveTrain(window, time);
             }
