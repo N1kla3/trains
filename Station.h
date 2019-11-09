@@ -11,39 +11,42 @@ class Station {
 private:
     const std::string picture = "C:/Users/Kolya/CLionProjects/trainLab/pictures/tradeStation.png";
 protected:
-    Train *arrivedTrain;
+    int type;
+    Train *train;
     bool hasTrain;
     int number;
     float cordX;
     float cordY;
     int product;
+    const int maxProduct;
     sf::Image image;
     sf::Texture stationTexture;
-    const int maxProduct;
-    virtual void unloading(){std::cout << "df";};
-    virtual void downloading(){std::cout << "sdfs";};
+    virtual void unloading(Train *train) {std::cout << "it is not a station";};
+    virtual void downloading(Train *train) {std::cout << "it is not a station";};
     virtual void initSprite(float x, float y, std::string picturePath);
     Station(int capacity) : maxProduct(capacity) {
         product = maxProduct - 100;
         hasTrain = false;
-        arrivedTrain = nullptr;
+        train = nullptr;
     }
 public:
     sf::Sprite stationSprite;
 
     float getX(){return cordX;}
     float getY(){return cordY;}
+    int getType(){return type;}
+    int getProduct(){return product;}
     void loseTrain();
     void getTrain();
     void handleTrain(Train *train);
     bool haveTrain(){return hasTrain;}
     int getNumber(){return number;}
-    Station(int id, int capacity, float x, float y)
-            :maxProduct(capacity), cordY(y), cordX(x){
+    Station(int type, int id, int capacity, float x, float y)
+            :type(type), maxProduct(capacity), cordY(y), cordX(x){
         number = id;
         product = maxProduct - 100;
         hasTrain = false;
-        arrivedTrain = nullptr;
+        train = nullptr;
         initSprite(x, y, picture);
     }
 };
@@ -52,10 +55,11 @@ class TradeStation : public Station{
 private:
     const std::string picture  = "C:/Users/Kolya/CLionProjects/trainLab/pictures/passStation.png";
 public:
-    void downloading()override;
-    void unloading()override;
-    TradeStation(int id, int capacity, float x, float y)
+    void downloading(Train *train) override;
+    void unloading(Train *train) override;
+    TradeStation(int type, int id, int capacity, float x, float y)
             :Station(capacity){
+        this->type = type;
         number = id;
         cordX = x;
         cordY = y;
@@ -67,10 +71,11 @@ class PassStation : public Station{
 private:
     const std::string picture = "C:/Users/Kolya/CLionProjects/trainLab/pictures/passStation.png" ;
 public:
-    void downloading()override;
-    void unloading()override;
-    PassStation(int id, int capacity, float x, float y)
+    void downloading(Train *train) override;
+    void unloading(Train *train) override;
+    PassStation(int type, int id, int capacity, float x, float y)
             :Station(capacity){
+        this->type = type;
         number = id;
         cordX = x;
         cordY = y;

@@ -5,12 +5,11 @@
 
 
 void Station::handleTrain(Train *train){
-    arrivedTrain = train;
     if(train->getMaxPassenCapacity() > train->getPassengerCapacity() ||
                 train->getMaxTradeCapacity() > train->getTradeCapacity()){
-        downloading();
+        downloading(train);
     }else{
-        unloading();
+        unloading(train);
     }
 }
 
@@ -31,50 +30,50 @@ void Station::initSprite(float x, float y, const std::string picturePath) {
 }
 
 
-void TradeStation::downloading() {
-    int trainFreeSpace = arrivedTrain->getMaxTradeCapacity() -
-                         arrivedTrain->getTradeCapacity();
+void TradeStation::downloading(Train *train) {
+    int trainFreeSpace = train->getMaxTradeCapacity() -
+                         train->getTradeCapacity();
 
     if(product > trainFreeSpace){
         product -= trainFreeSpace;
-        arrivedTrain->setTradeProd(arrivedTrain->getMaxTradeCapacity());
+        train->setTradeProd(train->getMaxTradeCapacity());
     }else{
-        arrivedTrain->setTradeProd(arrivedTrain->getTradeCapacity() + product);
+        train->setTradeProd(train->getTradeCapacity() + product);
         product = 0;
     }
 }
 
-void TradeStation::unloading() {
+void TradeStation::unloading(Train *train) {
     int stationFreeSpace = maxProduct - product;
-    if(arrivedTrain->getTradeCapacity() < stationFreeSpace) {
-        product += arrivedTrain->getTradeCapacity();
-        arrivedTrain->setTradeProd(0);
+    if(train->getTradeCapacity() < stationFreeSpace) {
+        product += train->getTradeCapacity();
+        train->setTradeProd(0);
     }else{
         product = maxProduct;
-        arrivedTrain->setTradeProd(arrivedTrain->getTradeCapacity() - stationFreeSpace);
+        train->setTradeProd(train->getTradeCapacity() - stationFreeSpace);
     }
 }
 
-void PassStation::downloading() {
-    int trainFreeSpace = arrivedTrain->getMaxPassenCapacity() -
-                         arrivedTrain->getPassengerCapacity();
+void PassStation::downloading(Train *train) {
+    int trainFreeSpace = train->getMaxPassenCapacity() -
+                         train->getPassengerCapacity();
 
     if(product > trainFreeSpace){
         product -= trainFreeSpace;
-        arrivedTrain->setPassengers(arrivedTrain->getMaxPassenCapacity());
+        train->setPassengers(train->getMaxPassenCapacity());
     }else{
-        arrivedTrain->setPassengers(arrivedTrain->getPassengerCapacity() + product);
+        train->setPassengers(train->getPassengerCapacity() + product);
         product = 0;
     }
 }
 
-void PassStation::unloading() {
+void PassStation::unloading(Train *train) {
     int stationFreeSpace = maxProduct - product;
-    if(arrivedTrain->getPassengerCapacity() < stationFreeSpace) {
-        product += arrivedTrain->getPassengerCapacity();
-        arrivedTrain->setPassengers(0);
+    if(train->getPassengerCapacity() < stationFreeSpace) {
+        product += train->getPassengerCapacity();
+        train->setPassengers(0);
     }else{
         product = maxProduct;
-        arrivedTrain->setPassengers(arrivedTrain->getTradeCapacity() - stationFreeSpace);
+        train->setPassengers(train->getTradeCapacity() - stationFreeSpace);
     }
 }

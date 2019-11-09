@@ -40,7 +40,8 @@ void Train::deleteSprite() {
 }
 
 float Train::getMovespeed() {
-    return 100;
+    float relation = ((float)((float)(currPassenCapacity + currTradeCapacity)/(float)(maxPassengerCapacity + maxTradeCapacity)))*100;
+    return 100 - relation;
 }
 
 void Train::initPixelMove() {
