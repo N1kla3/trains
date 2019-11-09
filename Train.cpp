@@ -41,7 +41,7 @@ void Train::deleteSprite() {
 
 float Train::getMovespeed() {
     float relation = ((float)((float)(currPassenCapacity + currTradeCapacity)/(float)(maxPassengerCapacity + maxTradeCapacity)))*100;
-    return 100 - relation;
+    return 20 + (100 - relation);
 }
 
 void Train::initPixelMove() {
@@ -99,11 +99,11 @@ double Train::calculateRotation(float x, float y, float lentgh) {
     res = (asin((double)result)*(180/3.14159265359));
     if(x > 0 && y < 0){
         res = 90 + res;
-    }else if (x > 0 && y > 0){
+    }else if (x >= 0 && y >= 0){
         res += 180;
     }else if(x < 0 && y > 0){
         res = 360 - res;
-    }else if (x < 0 && y < 0){
+    }else if (x <= 0 && y <= 0){
         res = 90 - res;
     }
     return res;
