@@ -40,6 +40,8 @@ private:
     std::vector<Train*> trains;
     std::vector<Station*> stations;
     std::vector<railWay*> railSprites;
+    Train * infoTrain;
+    Station * infoStation;
 
     int amountOfStations = 0;
     int size;
@@ -68,8 +70,10 @@ private:
     sf::Font font;
     sf::Text textPassCapacity;
     sf::Text textPassInfo;
+    sf::Text textMaxPassCapacity;
     sf::Text textTradeCapacity;
     sf::Text textTradeInfo;
+    sf::Text textMaxTradeCapacity;
     sf::Text textMoveSpeed;
     sf::Text textSpeedInfo;
     void initText();
