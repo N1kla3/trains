@@ -34,7 +34,7 @@ public:
     float getY(){return cordY;}
     int getType(){return type;}
     int getProduct(){return product;}
-    int getMaxProfuct(){return maxProduct;}
+    int getMaxProduct(){return maxProduct;}
     void loseTrain();
     void getTrain();
     virtual void handleTrain(Train *train);

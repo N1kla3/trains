@@ -7,7 +7,6 @@ int main()
 
     auto *map = new Map();
     sf::Clock clock;
-    int pause = 1;
     sf::Image image;
     image.loadFromFile("C:/Users/Kolya/CLionProjects/trainLab/pictures/gaben.png");
     image.createMaskFromColor( sf::Color::White, 0 );
@@ -15,6 +14,7 @@ int main()
     gabenTexture.loadFromImage(image);
     sf::Sprite *gabenSprite;
 
+    int pause = 1;
     while (window.isOpen()) {
 
         float time = clock.getElapsedTime().asMicroseconds();
@@ -35,13 +35,13 @@ int main()
                             gabenSprite->setPosition(400, 0);
                             window.draw(*gabenSprite);
                             window.display();
-                        }else if(!pause){
+                        }else {
                             pause = 1;
                             delete gabenSprite;
                         }
                     }
                 }
-                }
+            }
             if(pause) {
                 map->getInfo();
                 window.clear();

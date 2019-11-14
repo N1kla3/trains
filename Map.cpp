@@ -34,20 +34,29 @@ void Map::readStations(){
     int id, type, capacity, x ,y;
     if(file.is_open()) {
         while (file >> id >> type >> capacity >> x >> y) {
-            if (type == 1) {
-                auto *station = new TradeStation( type,id-1, capacity, (float) x, (float) y);
-                stations.push_back(station);
-            } else if (type == 2) {
-                auto *station = new PassStation( type, id-1,capacity, (float) x, (float) y);
-                stations.push_back(station);
-            } else {
-                auto *station = new Station(type,id-1,  capacity, (float) x, (float) y);
-                stations.push_back(station);
+            enum types {FORK, TRADES, PASSENGERS};
+            switch (type) {
+                case TRADES :{
+                    auto *station = new TradeStation( type,id-1, capacity, (float) x, (float) y);
+                    stations.push_back(station);
+                    break;
+                }
+                case PASSENGERS : {
+                    auto *station = new PassStation(type, id - 1, capacity, (float) x, (float) y);
+                    stations.push_back(station);
+                    break;
+                }
+                default: {
+                    auto *station = new Station(type,id-1,  capacity, (float) x, (float) y);
+                    stations.push_back(station);
+                    break;
+                }
             }Map::amountOfStations++;
         }
     }
     size = Map::amountOfStations;
 }
+
 
 void Map::readTrain() {
     std::ifstream file("C:/Users/Kolya/CLionProjects/trainLab/trains.txt");
@@ -135,7 +144,7 @@ void Map::makeRailways() {
         for (int j = i; j < size; j++) {
             if (field[i][j] == 1) {
                 auto *railway = new railWay(this, i, j);
-                railSprites.push_back(railway);
+                railways.push_back(railway);
             }
         }
     }
@@ -148,16 +157,16 @@ void Map::drawStations(sf::RenderWindow *window) {
 }
 
 void Map::drawRailways(sf::RenderWindow *window) {
-    for(railWay *i : railSprites){
+    for(railWay *i : railways){
         window->draw(i->sprite);
     }
 }
 
-int Map::getNextStation(int number) {
-    if(number < size){
+int Map::getNextStation(int currStationId) {
+    if(currStationId < size){
     for(int i = 0; i < size; i++){
-        if(i == number) continue;
-        if(field[number][i]){
+        if(i == currStationId) continue;
+        if(field[currStationId][i]){
             if(!stations[i]->haveTrain())
                 return i;
         }
@@ -214,7 +223,7 @@ void Map::setText(Train *train, Station *station) {
         if(station->getType() == 1) {
             textSpeedInfo.setString("none");
             textTradeInfo.setString(std::to_string(station->getProduct()));
-            textMaxTradeCapacity.setString(std::to_string(station->getMaxProfuct()));
+            textMaxTradeCapacity.setString(std::to_string(station->getMaxProduct()));
             textPassInfo.setString("none");
             textMaxPassCapacity.setString("none");
         }else if(station->getType() == 2){
@@ -222,7 +231,7 @@ void Map::setText(Train *train, Station *station) {
             textTradeInfo.setString("none");
             textMaxTradeCapacity.setString("none");
             textPassInfo.setString(std::to_string(station->getProduct()));
-            textMaxPassCapacity.setString(std::to_string(station->getMaxProfuct()));
+            textMaxPassCapacity.setString(std::to_string(station->getMaxProduct()));
         }else {
             textSpeedInfo.setString("none");
             textTradeInfo.setString("none");
@@ -245,12 +254,14 @@ void Map::getInfo() {
         if(infoStation != nullptr)
             infoStation->stationSprite.setScale(1, 1);
         if(infoTrain != nullptr)
-            infoTrain->trainSprite->setScale(1, 1);
+            if(infoTrain->trainSprite != nullptr)
+                infoTrain->trainSprite->setScale(1, 1);
 
         for(Station *station : stations){
-            if((sf::Mouse::getPosition().x > station->getX()) && (sf::Mouse::getPosition().x < station->getX() + 200)
-            &&
-            (sf::Mouse::getPosition().y > station->getY()) && (sf::Mouse::getPosition().y < station->getY() + 200))
+            bool stationClicked = (sf::Mouse::getPosition().x > station->getX()) && (sf::Mouse::getPosition().x < station->getX() + 200)
+                                  &&
+                                  (sf::Mouse::getPosition().y > station->getY()) && (sf::Mouse::getPosition().y < station->getY() + 200);
+            if(stationClicked)
             {
                 setText(nullptr, station);
                 infoStation = station;
@@ -260,11 +271,12 @@ void Map::getInfo() {
         }
         for(Train *train : trains) {
             if (train->trainSprite != nullptr) {
-                if ((sf::Mouse::getPosition().x > train->trainSprite->getPosition().x - 100)
-                    && (sf::Mouse::getPosition().x < train->trainSprite->getPosition().x + 100)
-                    &&
-                    (sf::Mouse::getPosition().y > train->trainSprite->getPosition().y - 100)
-                    && (sf::Mouse::getPosition().y < train->trainSprite->getPosition().y + 100)) {
+                bool trainClicked = (sf::Mouse::getPosition().x > train->trainSprite->getPosition().x - 100)
+                                    && (sf::Mouse::getPosition().x < train->trainSprite->getPosition().x + 100)
+                                    &&
+                                    (sf::Mouse::getPosition().y > train->trainSprite->getPosition().y - 100)
+                                    && (sf::Mouse::getPosition().y < train->trainSprite->getPosition().y + 100);
+                if (trainClicked) {
                     setText(train, nullptr);
                     infoTrain = train;
                     train->trainSprite->setScale(1.5 , 1.5);

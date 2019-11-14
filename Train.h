@@ -45,8 +45,6 @@ private:
 public:
     sf::Sprite *trainSprite;
     int nextStation;
-    float getY(){return yWayToStation;}
-    float getX(){return xWayToStation;}
     static float calculateLength(float x, float y);
     static double calculateRotation(float x, float y, float lentgh);
 
