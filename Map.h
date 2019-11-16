@@ -44,7 +44,6 @@ private:
     Station * infoStation = nullptr;
 
     int amountOfStations = 0;
-    int size;
     int** field;
     void createField();
     int getNextStation(int currStationId);
@@ -80,6 +79,7 @@ private:
     void drawText(sf::RenderWindow * window);
     void setText(Train * train, Station * station);
 public:
+    enum types {FORK, TRADES, PASSENGERS};
     void getInfo();
     void drawMap(sf::RenderWindow *window, float time);
     Map();

@@ -49,6 +49,7 @@ int main()
                 window.display();
             }
         }
+        delete map;
     }
     return 0;
 }
