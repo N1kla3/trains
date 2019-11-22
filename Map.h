@@ -17,10 +17,10 @@ private:
         sf::Texture railway;
     public:
         sf::Sprite sprite;
-        explicit railWay(Map *map, int i, int j) {
+        explicit railWay(Map *map, int beginStationId, int endStationId) {
 
-            float xDiff = map->stations[i]->getX() - map->stations[j]->getX();
-            float yDiff = map->stations[i]->getY() - map->stations[j]->getY();
+            float xDiff = map->stations[beginStationId]->getX() - map->stations[endStationId]->getX();
+            float yDiff = map->stations[beginStationId]->getY() - map->stations[endStationId]->getY();
 
             image.loadFromFile(imagePath);
             image.createMaskFromColor( sf::Color::White, 0 );
@@ -31,7 +31,7 @@ private:
             railway.setSmooth(true);
 
             sprite.setTexture(railway);
-            sprite.setPosition(map->stations[i]->getX() + 75, map->stations[i]->getY() + 75);
+            sprite.setPosition(map->stations[beginStationId]->getX() + 75, map->stations[beginStationId]->getY() + 75);
             sprite.setOrigin(0, 50);
             sprite.rotate((float) Train::calculateRotation(xDiff, yDiff, length));
         }
@@ -39,13 +39,14 @@ private:
 
     std::vector<Train*> trains;
     std::vector<Station*> stations;
-    std::vector<railWay*> railSprites;
+    std::vector<railWay*> railways;
+    Train * infoTrain = nullptr;
+    Station * infoStation = nullptr;
 
     int amountOfStations = 0;
-    int size;
     int** field;
     void createField();
-    int getNextStation(int number);
+    int getNextStation(int currStationId);
 
     void readField();
     void readStations();
@@ -68,15 +69,18 @@ private:
     sf::Font font;
     sf::Text textPassCapacity;
     sf::Text textPassInfo;
+    sf::Text textMaxPassCapacity;
     sf::Text textTradeCapacity;
     sf::Text textTradeInfo;
+    sf::Text textMaxTradeCapacity;
     sf::Text textMoveSpeed;
     sf::Text textSpeedInfo;
     void initText();
     void drawText(sf::RenderWindow * window);
-public:
-    void getInfo();
     void setText(Train * train, Station * station);
+public:
+    enum types {FORK, TRADES, PASSENGERS};
+    void getInfo();
     void drawMap(sf::RenderWindow *window, float time);
     Map();
     ~Map();

@@ -6,12 +6,12 @@
 
 
 void Map::createField(){
-    field = new int*[size];
-    for(int i = 0; i < size; i++){
-        field[i] = new int[size];
+    field = new int*[amountOfStations];
+    for(int i = 0; i < amountOfStations; i++){
+        field[i] = new int[amountOfStations];
     }
-    for(int i = 0; i < size; i++){
-        for(int j = 0; j < size; j++){
+    for(int i = 0; i < amountOfStations; i++){
+        for(int j = 0; j < amountOfStations; j++){
             field[i][j] = 0;
         }
     }
@@ -34,20 +34,27 @@ void Map::readStations(){
     int id, type, capacity, x ,y;
     if(file.is_open()) {
         while (file >> id >> type >> capacity >> x >> y) {
-            if (type == 1) {
-                auto *station = new TradeStation( type,id-1, capacity, (float) x, (float) y);
-                stations.push_back(station);
-            } else if (type == 2) {
-                auto *station = new PassStation( type, id-1,capacity, (float) x, (float) y);
-                stations.push_back(station);
-            } else {
-                auto *station = new Station(type,id-1,  capacity, (float) x, (float) y);
-                stations.push_back(station);
-            }Map::amountOfStations++;
+            switch (type) {
+                case TRADES :{
+                    auto *station = new TradeStation( type,id-1, capacity, (float) x, (float) y);
+                    stations.push_back(station);
+                    break;
+                }
+                case PASSENGERS : {
+                    auto *station = new PassStation(type, id - 1, capacity, (float) x, (float) y);
+                    stations.push_back(station);
+                    break;
+                }
+                default: {
+                    auto *station = new Station(type,id-1,  capacity, (float) x, (float) y);
+                    stations.push_back(station);
+                    break;
+                }
+            }amountOfStations++;
         }
     }
-    size = Map::amountOfStations;
 }
+
 
 void Map::readTrain() {
     std::ifstream file("C:/Users/Kolya/CLionProjects/trainLab/trains.txt");
@@ -62,39 +69,53 @@ void Map::readTrain() {
 }
 
 void Map::initText() {
+    const float menuCoordX = 1130;
+    const float offsetY = 70;
+
     font.loadFromFile("C:/Windows/Fonts/Arial.ttf");
-    textPassCapacity.setPosition(1130, 50);
+
+    textPassCapacity.setPosition(menuCoordX, offsetY);
     textPassCapacity.setFont(font);
     textPassCapacity.setString("Passenger capacity ");
     textPassCapacity.setCharacterSize(24);
-    textPassCapacity.setFillColor(sf::Color::Green);
-
-    textTradeCapacity.setFont(font);
-    textTradeCapacity.setPosition(1130, 250);
-    textTradeCapacity.setString("Trade capacity ");
-    textTradeCapacity.setCharacterSize(24);
-    textTradeCapacity.setFillColor(sf::Color::Green);
-
-    textMoveSpeed.setFont(font);
-    textMoveSpeed.setPosition(1130, 450);
-    textMoveSpeed.setString("Movespeed ");
-    textMoveSpeed.setCharacterSize(24);
-    textMoveSpeed.setFillColor(sf::Color::Green);
+    textPassCapacity.setFillColor(sf::Color::Blue);
 
     textPassInfo.setFont(font);
-    textPassInfo.setPosition(1130, 150);
+    textPassInfo.setPosition(menuCoordX, offsetY * 2);
     textPassInfo.setCharacterSize(24);
-    textPassInfo.setFillColor(sf::Color::Red);
+    textPassInfo.setFillColor(sf::Color::Green);
+
+    textMaxPassCapacity.setFont(font);
+    textMaxPassCapacity.setPosition(menuCoordX, offsetY * 3);
+    textMaxPassCapacity.setCharacterSize(24);
+    textMaxPassCapacity.setFillColor(sf::Color::Red);
+
+    textTradeCapacity.setFont(font);
+    textTradeCapacity.setPosition(menuCoordX, offsetY * 4);
+    textTradeCapacity.setString("Trade capacity ");
+    textTradeCapacity.setCharacterSize(24);
+    textTradeCapacity.setFillColor(sf::Color::Blue);
 
     textTradeInfo.setFont(font);
-    textTradeInfo.setPosition(1130, 350);
+    textTradeInfo.setPosition(menuCoordX, offsetY * 5);
     textTradeInfo.setCharacterSize(24);
-    textTradeInfo.setFillColor(sf::Color::Red);
+    textTradeInfo.setFillColor(sf::Color::Green);
+
+    textMaxTradeCapacity.setFont(font);
+    textMaxTradeCapacity.setPosition(menuCoordX, offsetY * 6);
+    textMaxTradeCapacity.setCharacterSize(24);
+    textMaxTradeCapacity.setFillColor(sf::Color::Red);
+
+    textMoveSpeed.setFont(font);
+    textMoveSpeed.setPosition(menuCoordX, offsetY * 7);
+    textMoveSpeed.setString("Movespeed ");
+    textMoveSpeed.setCharacterSize(24);
+    textMoveSpeed.setFillColor(sf::Color::Blue);
 
     textSpeedInfo.setFont(font);
-    textSpeedInfo.setPosition(1130, 550);
+    textSpeedInfo.setPosition(menuCoordX, offsetY * 8);
     textSpeedInfo.setCharacterSize(24);
-    textSpeedInfo.setFillColor(sf::Color::Red);
+    textSpeedInfo.setFillColor(sf::Color::Green);
 
 }
 
@@ -120,11 +141,11 @@ void Map::initializeTrains() {
 }
 
 void Map::makeRailways() {
-    for (int i = 0; i < size; i++) {
-        for (int j = i; j < size; j++) {
+    for (int i = 0; i < amountOfStations; i++) {
+        for (int j = i; j < amountOfStations; j++) {
             if (field[i][j] == 1) {
                 auto *railway = new railWay(this, i, j);
-                railSprites.push_back(railway);
+                railways.push_back(railway);
             }
         }
     }
@@ -137,16 +158,16 @@ void Map::drawStations(sf::RenderWindow *window) {
 }
 
 void Map::drawRailways(sf::RenderWindow *window) {
-    for(railWay *i : railSprites){
+    for(railWay *i : railways){
         window->draw(i->sprite);
     }
 }
 
-int Map::getNextStation(int number) {
-    if(number < size){
-    for(int i = 0; i < size; i++){
-        if(i == number) continue;
-        if(field[number][i]){
+int Map::getNextStation(int currStationId) {
+    if(currStationId < amountOfStations){
+    for(int i = 0; i < amountOfStations; i++){
+        if(i == currStationId) continue;
+        if(field[currStationId][i]){
             if(!stations[i]->haveTrain())
                 return i;
         }
@@ -158,8 +179,10 @@ int Map::getNextStation(int number) {
 void Map::drawText(sf::RenderWindow *window) {
     window->draw(textTradeCapacity);
     window->draw(textTradeInfo);
+    window->draw(textMaxTradeCapacity);
     window->draw(textPassCapacity);
     window->draw(textPassInfo);
+    window->draw(textMaxPassCapacity);
     window->draw(textMoveSpeed);
     window->draw(textSpeedInfo);
 }
@@ -198,46 +221,68 @@ void Map::drawTrains(sf::RenderWindow *window, float time) {
 
 void Map::setText(Train *train, Station *station) {
     if(train == nullptr) {
-        if(station->getType() == 1) {
+        if(station->getType() == TRADES) {
             textSpeedInfo.setString("none");
             textTradeInfo.setString(std::to_string(station->getProduct()));
+            textMaxTradeCapacity.setString(std::to_string(station->getMaxProduct()));
             textPassInfo.setString("none");
-        }else if(station->getType() == 2){
+            textMaxPassCapacity.setString("none");
+        }else if(station->getType() == PASSENGERS){
             textSpeedInfo.setString("none");
             textTradeInfo.setString("none");
+            textMaxTradeCapacity.setString("none");
             textPassInfo.setString(std::to_string(station->getProduct()));
+            textMaxPassCapacity.setString(std::to_string(station->getMaxProduct()));
         }else {
             textSpeedInfo.setString("none");
             textTradeInfo.setString("none");
+            textMaxTradeCapacity.setString("none");
             textPassInfo.setString("none");
+            textMaxPassCapacity.setString("none");
         }
     }else if(station == nullptr){
         textSpeedInfo.setString(std::to_string(train->getMovespeed()));
         textTradeInfo.setString(std::to_string(train->getTradeCapacity()));
+        textMaxTradeCapacity.setString(std::to_string(train->getMaxTradeCapacity()));
         textPassInfo.setString(std::to_string(train->getPassengerCapacity()));
+        textMaxPassCapacity.setString(std::to_string(train->getMaxPassenCapacity()));
     }
 }
 
 void Map::getInfo() {
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
+        if(infoStation != nullptr)
+            infoStation->stationSprite.setScale(1, 1);
+        if(infoTrain != nullptr)
+            if(infoTrain->trainSprite != nullptr)
+                infoTrain->trainSprite->setScale(1, 1);
+
         for(Station *station : stations){
-            if((sf::Mouse::getPosition().x > station->getX()) && (sf::Mouse::getPosition().x < station->getX() + 200)
-            &&
-            (sf::Mouse::getPosition().y > station->getY()) && (sf::Mouse::getPosition().y < station->getY() + 200))
+            float stationSize = 200;
+            bool stationClicked = (sf::Mouse::getPosition().x > station->getX()) && (sf::Mouse::getPosition().x < station->getX() + stationSize)
+                                  &&
+                                  (sf::Mouse::getPosition().y > station->getY()) && (sf::Mouse::getPosition().y < station->getY() + stationSize);
+            if(stationClicked)
             {
                 setText(nullptr, station);
+                infoStation = station;
+                infoStation->stationSprite.setScale(1.5, 1.5);
                 return;
             }
         }
         for(Train *train : trains) {
             if (train->trainSprite != nullptr) {
-                if ((sf::Mouse::getPosition().x > train->trainSprite->getPosition().x - 100)
-                    && (sf::Mouse::getPosition().x < train->trainSprite->getPosition().x + 100)
-                    &&
-                    (sf::Mouse::getPosition().y > train->trainSprite->getPosition().y - 100)
-                    && (sf::Mouse::getPosition().y < train->trainSprite->getPosition().y + 100)) {
+                float trainSize = 100;
+                bool trainClicked = (sf::Mouse::getPosition().x > train->trainSprite->getPosition().x - trainSize)
+                                    && (sf::Mouse::getPosition().x < train->trainSprite->getPosition().x + trainSize)
+                                    &&
+                                    (sf::Mouse::getPosition().y > train->trainSprite->getPosition().y - trainSize)
+                                    && (sf::Mouse::getPosition().y < train->trainSprite->getPosition().y + trainSize);
+                if (trainClicked) {
                     setText(train, nullptr);
+                    infoTrain = train;
+                    train->trainSprite->setScale(1.5 , 1.5);
                     return;
                 }
             }
@@ -270,8 +315,18 @@ Map::Map() {
 }
 
 Map::~Map() {
-    for(int i = 0; i < size; i++){
+    for(int i = 0; i < amountOfStations; i++){
         delete  [] field[i];
     }
     delete [] field;
+
+    for(Station *station : stations)
+        delete station;
+    stations.clear();
+
+    for(Train *train : trains) {
+        train->deleteSprite();
+        delete train;
+    }
+    trains.clear();
 }

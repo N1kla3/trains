@@ -80,11 +80,7 @@ void Train::initSprite(float x, float y, float xDiff, float yDiff) {
 }
 
 void Train::moveTrain(sf::RenderWindow *window, float time) {
-
     trainSprite->move(xPixelMove * time, yPixelMove * time);
-    sf::Vector2f lol = trainSprite->getPosition();
-    std::cout << lol.x << std::ends;
-    std::cout << lol.y << std::endl;
     window->draw(*trainSprite);
 }
 
